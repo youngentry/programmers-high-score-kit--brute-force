@@ -1,47 +1,40 @@
-const isPrime = (number) => {
-  if (number < 2) return false;
-  for (let i = 2; i <= Math.sqrt(number); i++) {
-    if (number % i === 0) return false;
-  }
-  return true;
-};
-
-const getPermutations = (array, pick) => {
-  const permutations = [];
-
-  const permute = (current, remaining) => {
-    if (current.length === pick) {
-      permutations.push(current);
-      return;
+function solution(numbers) {
+  const isPrime = (number) => {
+    if (number === 2) {
+      return true;
     }
-
-    for (let i = 0; i < remaining.length; i++) {
-      const next = [...current, remaining[i]];
-      const rest = [...remaining.slice(0, i), ...remaining.slice(i + 1)];
-      permute(next, rest);
+    if (number < 2 || number % 2 === 0) {
+      return false;
     }
-  };
-
-  permute([], array);
-  return permutations;
-};
-
-const findPrimePermutations = (numbers) => {
-  const primeSet = new Set();
-
-  for (let pick = 1; pick <= numbers.length; pick++) {
-    const permutations = getPermutations(numbers, pick);
-    for (const permutation of permutations) {
-      const number = parseInt(permutation.join(""));
-      if (isPrime(number)) {
-        primeSet.add(number);
+    for (let i = 3; i * i <= number; i += 2) {
+      if (number % i === 0) {
+        return false;
       }
     }
+    return true;
+  };
+
+  const numberArray = numbers.split("");
+  const foundPrimeSet = new Set();
+  const permutation = (i, array, pick) => {
+    if (i === pick) {
+      const toCheckNumber = Number(array.slice(0, i).join(""));
+      const isPrimeNumber = isPrime(toCheckNumber);
+      if (isPrimeNumber) {
+        return foundPrimeSet.add(toCheckNumber);
+      }
+    }
+    for (let j = i; j < array.length; j++) {
+      [array[i], array[j]] = [array[j], array[i]];
+      permutation(i + 1, array, pick);
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  };
+  for (let pick = 1; pick <= numberArray.length; pick++) {
+    permutation(0, numberArray, pick);
   }
 
-  console.log(primeSet, "찾은소수", primeSet.size, "개");
-  return primeSet.size;
-};
+  return foundPrimeSet.size;
+}
 
-const numbers = [1, 2, 3];
-console.log(findPrimePermutations("011"));
+solution("011");
