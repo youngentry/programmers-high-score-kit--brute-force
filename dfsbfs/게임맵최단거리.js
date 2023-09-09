@@ -1,55 +1,45 @@
+const canMove = (xMove, yMove, n, m, maps) => {
+  return xMove >= 0 && yMove >= 0 && xMove < n && yMove < m && maps[xMove][yMove] === 1;
+};
+
 function solution(maps) {
-  // 0,0 에서 시작한다
+  const [n, m] = [maps.length, maps[0].length]; // 보드 크기
+  const p = [0, 0, 0]; // 플레이어의 x좌표, y좌표, 이동 횟수
 
-  // 방문한 지점을 0으로 바꾼다
+  const moveStack = [p]; // 초기 플레이어의 좌표 설정
 
-  // 방문하지 않은 지점으로 진행한다
-
-  // 이동횟수를 +1 한다
-
-  // 방문하지 않은 지점이 없다면 p의 위치가 n,m 에 위치했는지 확인한다
-
-  // n,m이 아니라면 -1을 반환한다
-
-  const [n, m] = [maps.length, maps[0].length];
-  if (maps[n - 1][m - 2] === 0 && maps[n - 2][m - 1] === 0) {
-    return -1;
-  }
-
-  const directions = [
+  const dirs = [
     [-1, 0], // 상
     [1, 0], // 하
     [0, -1], // 좌
     [0, 1], // 우
   ];
 
-  maps[0][0] = 0;
+  // 이동이 불가능할 때까지 시행합니다.
+  while (moveStack.length) {
+    console.log(maps);
+    const [x, y, count] = moveStack.shift(); // queue를 사용하지 않으면 최단거리가 아니게 된다.
 
-  let result = 10000;
-
-  const dfs = (px, py, count, maps) => {
-    // maps[px][py] = 0; // 방문한 지점을 0으로 바꾼다
-    if (px === n - 1 && py === m - 1) {
-      result = Math.min(count, result);
-      return;
+    // p의 좌표가 목적지에 위치해 있다면 이동 횟수를 반환하여 게임을 종료합니다.
+    if (x === n - 1 && y === m - 1) {
+      return count + 1;
     }
 
-    for (let dir of directions) {
+    for (let dir of dirs) {
       const [dx, dy] = dir;
-      const [nextX, nextY] = [px + dx, py + dy];
-      if (nextX >= 0 && nextY >= 0 && nextX < n && nextY < m) {
-        if (maps[nextX][nextY] === 1) {
-          maps[nextX][nextY] = 0; // 방문한 지점을 0으로 바꾼다
-          dfs(nextX, nextY, count + 1, maps);
-          maps[nextX][nextY] = 1; // 방문한 지점을 0으로 바꾼다
-        }
+      const xMove = x + dx;
+      const yMove = y + dy;
+
+      // 다음으로 이동가능한 좌표가 존재할 경우
+      if (canMove(xMove, yMove, n, m, maps)) {
+        // 해당 좌표로 이동
+        maps[xMove][yMove] = 0; // 방문 표시 남기기
+        moveStack.push([xMove, yMove, count + 1]);
       }
     }
-  };
+  }
 
-  dfs(0, 0, 1, maps);
-
-  if (result !== 10000) return result;
+  // 최종 목적지에 도달하지 못했다면 -1을 반환합니다.
   return -1;
 }
 
