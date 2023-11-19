@@ -1,68 +1,42 @@
 function solution(begin, target, words) {
-  const isChangeableWord = (base, compare) => {
-    let count = 0;
-    const wordLength = base.length;
+  const wordLength = words[0].length;
+  let result = words.length + 1;
 
-    for (let i = 0; i < wordLength; i++) {
-      if (base[i] === compare[i]) count++;
+  const dfs = (words, compareWord, count) => {
+    const begin = compareWord;
+
+    if (compareWord === target) {
+      result = Math.min(count, result);
+      return;
     }
 
-    return count === wordLength - 1 ? true : false;
+    words.forEach((word, index) => {
+      let sameCount = 0;
+      for (let i = 0; i < wordLength; i++) {
+        if (baseWord[i] === compareWord[i]) {
+          sameCount++;
+        }
+      }
+
+      if (sameCount === wordLength - 1) {
+        compareWord = word;
+        words[index] = "";
+        dfs(words, compareWord, count + 1);
+        compareWord = begin;
+        words[index] = word;
+      }
+    });
   };
 
-  const startList = [];
-  for (let i = 0; i < words.length; i++) {
-    if (isChangeableWord(begin, words[i])) {
-      startList.push(i);
-    }
-  }
+  dfs(words, begin, 0);
 
-  console.log(startList, "startList");
-
-  // 변환 가능한 word 인접리스트 생성
-  const obj = {};
-
-  for (let i = 0; i < words.length; i++) {
-    const word = words[i];
-    for (let j = 0; j < words.length; j++) {
-      if (isChangeableWord(word, words[j])) {
-        obj[word] ? (obj[word] = [...obj[word], j]) : (obj[word] = [j]);
-      }
-    }
-  }
-
-  console.log(obj, "obj");
-
-  let result = Infinity;
-
-  for (let i = 0; i < startList.length; i++) {
-    let count = 0;
-
-    const startIndex = startList[i];
-    const indexStack = [...obj[words[startIndex]]];
-    const visited = Array(words.length).fill(0);
-    visited[startIndex] = 1;
-    count++;
-
-    while (indexStack.length) {
-      const curIdx = indexStack.shift();
-      console.log(curIdx, "curIdx", indexStack, "indexStack");
-      console.log(visited);
-      if (words[indexStack] === target) {
-        return count;
-      }
-      if (!visited[curIdx]) {
-        indexStack.push(...obj[words[curIdx]]);
-        console.log(...obj[words[curIdx]], "...obj[words[curIdx]]");
-        count++;
-        visited[curIdx] = 1;
-      }
-    }
-
-    result = Math.min(result, count);
-  }
-
-  console.log(0);
-  return 0;
+  return result === words.length + 1 ? 0 : result;
 }
-solution("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]);
+solution("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cig"]);
+
+// 한 번에 한 개의 알파벳 변경 가능
+// words에 존재하는 단어로만 변환 가능
+// 중복되는 단어는 없음
+
+// 이미 확인한 워드는 방문처리
+// 최소 횟수 탐색
