@@ -13,7 +13,7 @@ function solution(begin, target, words) {
     words.forEach((word, index) => {
       let sameCount = 0;
       for (let i = 0; i < wordLength; i++) {
-        if (baseWord[i] === compareWord[i]) {
+        if (word[i] === compareWord[i]) {
           sameCount++;
         }
       }
