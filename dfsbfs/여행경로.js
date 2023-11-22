@@ -1,60 +1,69 @@
+// 0922;
+
 function solution(tickets) {
+  const size = tickets.length;
   const result = [];
-  const map = {};
-  const length = tickets.length + 1;
+  const visited = Array(size).fill(0);
 
-  for (let ticket of tickets) {
-    const [go, to] = ticket;
-    map[go] ? (map[go] = [...map[go], to]) : (map[go] = [to]);
-  }
-
-  // 정렬하여 알파벳 앞서는 공항 먼저 출발
-  for (let each in map) {
-    map[each].sort();
-  }
-
-  const backtrack = (next, arr, count) => {
-    if (count === length) {
-      if (arr.length === length) {
-        console.log(arr);
-        result.push(arr);
-      }
-      return;
-    }
-    if (!map[next][0]) {
+  const dfs = (route, via) => {
+    // 모든 티켓 사용 시 결과에 추가
+    if (route.length === size) {
+      route.push(via);
+      result.push([...route]);
       return;
     }
 
-    for (let i = 0; i < map[next].length; i++) {
-      const to = map[next][i]; // 다음 행선지
-      map[next].splice(i, 1);
-      arr.push(to);
-
-      if (map?.[next]?.[i + 1] === to) {
-        i++;
-        continue;
+    for (let i = 0; i < size; i++) {
+      console.log(visited[i], via, tickets[i][0]);
+      if (!visited[i] && via === tickets[i][0]) {
+        // console.log(tickets[i], route, via, tickets[i][1]);
+        visited[i] = 1;
+        route.push(via);
+        dfs(route, tickets[i][0]);
+        visited[i] = 0;
       }
-
-      backtrack(to, arr, count + 1);
-
-      map[next].splice(i - 1, 0, to);
-      arr.pop();
     }
   };
 
-  backtrack("ICN", ["ICN"], 1);
-
+  for (let i = 0; i < tickets.length; i++) {
+    const route = new Array();
+    if (tickets[i][0] === "ICN") {
+      visited[i] = 1;
+      route.push(tickets[i][0]);
+      dfs([...route], "ICN");
+      visited[i] = 0;
+    }
+  }
   console.log(result);
-  return result;
+  return result.sort()[0];
 }
 
+// solution([
+//   ["ICN", "BOO"],
+//   ["ICN", "COO"],
+//   ["COO", "DOO"],
+//   ["DOO", "COO"],
+//   ["BOO", "DOO"],
+//   ["DOO", "BOO"],
+//   ["BOO", "ICN"],
+//   ["COO", "BOO"],
+// ]);
+// ["ICN", "BOO", "DOO", "BOO", "ICN", "COO", "DOO", "COO", "BOO"]
+// solution([
+//   ["ICN", "ABC"],
+//   ["ICN", "ABC"],
+//   ["ICN", "ABC"],
+//   ["ICN", "ABC"],
+//   ["ABC", "ICN"],
+//   ["ABC", "ICN"],
+//   ["ABC", "ICN"],
+//   ["ABC", "ICN"],
+// ]);
+
 solution([
-  ["ICN", "BOO"],
-  ["ICN", "COO"],
-  ["COO", "DOO"],
-  ["DOO", "COO"],
-  ["BOO", "DOO"],
-  ["DOO", "BOO"],
-  ["BOO", "ICN"],
-  ["COO", "BOO"],
+  ["ICN", "SFO"],
+  ["ICN", "ATL"],
+  ["SFO", "ATL"],
+  ["ATL", "ICN"],
+  ["ATL", "SFO"],
 ]);
