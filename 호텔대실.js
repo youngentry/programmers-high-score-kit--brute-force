@@ -1,26 +1,31 @@
+function getMinute(time) {
+  const [hour, min] = time.split(":");
+  return hour * 60 + Number(min);
+}
+
 function solution(book_time) {
   const timeTable = Array(60 * 60).fill(0);
 
   // [체크인시간, 퇴실시간+10] 구하기
-  const stayTimes = book_time.map((time) => {
+  book_time.forEach((time) => {
     const checkInMinute = getMinute(time[0]);
     const checkOutMinute = getMinute(time[1]) + 10;
-    return [checkInMinute, checkOutMinute];
+
+    for (let i = checkInMinute; i < checkOutMinute; i++) {
+      timeTable[i]++;
+    }
   });
 
-  // 시간표 상에서 체크인시간index부터 퇴실시간index에 해당하는 요소에 +1 해주기
-  for (let i = 0; i < stayTimes.length; i++) {
-    for (let j = stayTimes[i][0]; j < stayTimes[i][1]; j++) {
-      timeTable[j]++;
-    }
-  }
   return Math.max(...timeTable);
-
-  function getMinute(time) {
-    const [hour, min] = time.split(":");
-    return hour * 60 + Number(min);
-  }
 }
+
+solution([
+  ["15:00", "17:00"],
+  ["16:40", "18:20"],
+  ["14:20", "15:20"],
+  ["14:10", "19:20"],
+  ["18:20", "21:20"],
+]);
 
 // 최소한의 객실만 사용
 // 한 번 사용한 객실은 퇴실 시간을 기준으로 10분 청소 필요
