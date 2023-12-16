@@ -55,6 +55,20 @@ function solution(maps) {
   return leverMove + exitMove;
 }
 
-// Example usage:
-const result = solution(["SLEOO", "OOOOO", "OOOOO", "OOOOO", "OOOOO"]);
-console.log(result);
+solution(["SLEOO", "OOOOO", "OOOOO", "OOOOO", "OOOOO"]);
+
+// 1x1 칸, 격자 미로
+// 통로 또는 벽
+// 탈출구는 레버로 열 수 있음
+// 최대한 빨리 나가기
+
+// S : 시작 지점
+// E : 출구
+// L : 레버
+// O : 통로
+// X : 벽
+
+// 탈출 못하면 -1
+
+// 레버 찾아 열기
+// 탈출구 찾아 열기
